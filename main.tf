@@ -75,19 +75,16 @@ resource "aws_ami_from_instance" "main" {
 resource "terraform_data" "main_delete" {
   triggers_replace = [
     aws_instance.main.id
-  ]
-  
+  ]  
   # make sure you have aws configure in your laptop
   provisioner "local-exec" {
     command = "aws ec2 terminate-instances --instance-ids ${aws_instance.main.id}"
   }
-
   depends_on = [aws_ami_from_instance.main]
 }
 
 resource "aws_launch_template" "main" {
   name = "${var.project}-${var.environment}-${var.component}"
-
   image_id = aws_ami_from_instance.main.id
   instance_initiated_shutdown_behavior = "terminate"
   instance_type = "t3.micro"
@@ -123,7 +120,6 @@ resource "aws_launch_template" "main" {
         Name = "${var.project}-${var.environment}-${var.component}"
       }
   )
-
 }
 
 resource "aws_autoscaling_group" "main" {
@@ -176,7 +172,6 @@ resource "aws_autoscaling_policy" "main" {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
-
     target_value = 75.0
   }
 }
